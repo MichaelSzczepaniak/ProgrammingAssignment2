@@ -2,11 +2,11 @@
 ## x, its inverse inv, and 4 functions: two that get and set x and two that get
 ## and set inv.
 ##
-## This object is used in conjunction with the cacheSolve function in order
-## cache the calculation of inv so that unnecessarily repeated computations of
-## the inverse can be avoided.
+## This object is used in conjunction with the cacheSolve function in order to
+## cache the calculation of inv so that unnecessary/repeated computations of
+## the same inverse can be avoided.
 makeCacheMatrix <- function(x = matrix()) {
-    inv <- NULL  # says NULL until the first time setinv is called
+    inv <- NULL  # stays NULL until the first time setinv is called
     # loads the matrix y into the parent environement
     set <- function(y) {
         x <<- y
@@ -39,7 +39,7 @@ makeCacheMatrix <- function(x = matrix()) {
 ## Because this function uses the R solve(a, b, ...) function to compute the
 ## inverse, any parameters passed besides x are assumed to be intended for the
 ## solve(a, b, ...) function.  If no additional parameters besides x are passed,
-## default values for will be used in the call to solve.
+## default values will be used in the call to solve.
 cacheSolve <- function(x, ...) {
     ## Return a matrix that is the inverse of 'x'
     inv <- x$getinv()
