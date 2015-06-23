@@ -1,42 +1,57 @@
-## Put comments here that give an overall description of what your
-## functions do
-
-## Write a short comment describing this function
-
+## This function takes a matrix x as input and constructs an object which holds
+## x, its inverse inv, and 4 functions: two that get and set x and two that get
+## and set inv.
+##
+## This object is used in conjunction with the cacheSolve function in order
+## cache the calculation of inv so that unnecessarily repeated computations of
+## the inverse can be avoided.
 makeCacheMatrix <- function(x = matrix()) {
-    inv <- NULL
+    inv <- NULL  # says NULL until the first time setinv is called
+    # loads the matrix y into the parent environement
     set <- function(y) {
         x <<- y
-        inv <- NULL
+        inv <- NULL  # clears the prior computed inverse to reflect
+                     # initial state of new matrix
     }
-    get <- function(x) {
+    # gets the matrix the return object (list) wraps
+    get <- function() {
         x
     }
-    setInverse <- function(invers) {
+    # sets the computed inverse matrix (invers) in the parent environment
+    setinv <- function(invers) {
         inv <<- invers
     }
-    getInverse <- function() {
+    # gets the inverse matrix if it was set (by setinv) or returns NULL
+    # if it was not
+    getinv <- function() {
         inv
     }
     
-    list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
+    list(set = set, get = get, setinv = setinv, getinv = getinv)
 }
 
 
-## Write a short comment describing this function
-
+## This function takes an input x that is a matrix wrapper object created from
+## a call to makeCacheMatrix and returns the inverse of the matrix which the x
+## object wraps.
+##
+## Additional paremeters may be passed to this function, but they are optional.
+## Because this function uses the R solve(a, b, ...) function to compute the
+## inverse, any parameters passed besides x are assumed to be intended for the
+## solve(a, b, ...) function.  If no additional parameters besides x are passed,
+## default values for will be used in the call to solve.
 cacheSolve <- function(x, ...) {
     ## Return a matrix that is the inverse of 'x'
-    inv <- x$getInverse()
+    inv <- x$getinv()
     if(!is.null(inv)) {
         # inverse has already been calculate
         message("getting data from cache")
     }
     # inverse has been cached, so calculate it
     dataMatrix <- x$get()  # get the data out of special "matrix" object (list)
-    inv <- solve(dataMatrix)
-    x$setInverse(inv)  # update the special "matrix" object (SMO) so that the
-                       # next time cacheSolve is called on the same SMO, the
-                       # cached value will be returned instead of recalculating
+    inv <- solve(dataMatrix, ...)
+    x$setinv(inv)  # update the special "matrix" object (SMO) so that the
+                   # next time cacheSolve is called on the same SMO, the
+                   # cached value will be returned instead of recalculating
     inv
 }
